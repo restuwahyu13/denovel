@@ -8,6 +8,11 @@ export async function viewEngineMiddleware(ctx: any, next: any) : Promise <void>
              case "ejs":
                const ejsTemplate : Promise<string> =  renderFileToString(`${Deno.cwd()}/resources/views/${view}.ejs`, body);
                return ejsTemplate;
+             case "html":
+               const decoded = new TextDecoder("utf-8");
+               const file : ArrayBuffer  = Deno.readFileSync(`${Deno.cwd()}/resources/views/${view}.html`);
+               const htmlTemplate : string = decoded.decode(file);
+               return htmlTemplate;
              default:
                throw new Error("template must be string");
          }
