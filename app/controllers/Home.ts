@@ -1,6 +1,5 @@
 import Controller from './Controller.ts';
 import { database } from '../../vendor/package/denovel/_database.ts';
-import * as dejs from 'https://deno.land/x/dejs@0.6.0/mod.ts';
 
 export class Home extends Controller {
 
@@ -10,11 +9,10 @@ export class Home extends Controller {
      * @return {any} abstract of index function
      */
 
-    async index(ctx: any){
+    async index({response, render} : any){
         const denovel = database.collection("denovel");
         const datas = await denovel.find({ example: { $ne: null } });
-        const output = await dejs.renderFileToString(`${Deno.cwd()}/resources/views/index.ejs`, { datas });
-        ctx.response.body = output;
+        response.body =  await render("ejs", "index", { datas });
     }
 
     /**
@@ -23,12 +21,11 @@ export class Home extends Controller {
      * @return {any} abstract of get function
      */
 
-    async get(ctx: any){
+    async get({response, render}: any){
         const denovel = database.collection("denovel");
         const datas = await denovel.find({ example: { $ne: null } });
-        const output = await dejs.renderFileToString(`${Deno.cwd()}/resources/views/index.ejs`, { datas });
-        ctx.response.body = output;
-    }  
+        response.body = await render("ejs", "index", { datas });
+    }
 
     /**
      * Post the input of post function
@@ -36,7 +33,7 @@ export class Home extends Controller {
      * @return {any} abstract of post function
      */
 
-    async post({request,response}: any){
+    async post({request, response, render}: any){
         const body = await request.body();
         const value = body.value.get("example");
         const denovel = database.collection("denovel");
@@ -45,9 +42,8 @@ export class Home extends Controller {
         });
 
         const datas = await denovel.find({ example: { $ne: null } });
-        const output = await dejs.renderFileToString(`${Deno.cwd()}/resources/views/index.ejs`, { datas });
-        response.body = output;
-    }  
+        response.body = await render("ejs", "index", { datas });
+    }
 
     /**
      * Edit the input of edit function
@@ -55,12 +51,11 @@ export class Home extends Controller {
      * @return {any} abstract of edit function
      */
 
-    async edit({request,response,params}: any){
+    async edit({request, response, params, render}: any){
         const denovel = database.collection("denovel");
         const datas = await denovel.findOne({ _id: { "$oid": params.id } });
-        const output = await dejs.renderFileToString(`${Deno.cwd()}/resources/views/edit.ejs`, { datas });
-        response.body = output;        
-    }  
+        response.body = await render("ejs", "edit", { datas });
+    }
 
     /**
      * Put the input of put function
@@ -68,7 +63,7 @@ export class Home extends Controller {
      * @return {any} abstract of put function
      */
 
-    async put({request,response,params}: any){
+    async put({request, response, params}: any){
         const body = await request.body();
         const value = body.value.get("example");
         const denovel = database.collection("denovel");
@@ -82,7 +77,7 @@ export class Home extends Controller {
             message: "Data updated succesfully!",
             data: params.id,
         }
-    }  
+    }
 
     /**
      * Delete the input of delete function
@@ -90,8 +85,8 @@ export class Home extends Controller {
      * @return {any} abstract of delete function
      */
 
-    async delete({request,response,params}: any){
-        const denovel = database.collection("denovel");   
+    async delete({request, response, params}: any){
+        const denovel = database.collection("denovel");
         await denovel.deleteOne({ _id: { "$oid": params.id} });
 
         response.body = {
@@ -99,5 +94,5 @@ export class Home extends Controller {
             message: "Data deleted succesfully!",
             data: params.id,
         }
-    }  
+    }
 }
