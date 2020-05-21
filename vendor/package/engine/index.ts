@@ -14,7 +14,7 @@ export async function viewEngineMiddleware(ctx: any, next: any) : Promise <void>
                const htmlTemplate : string = decoded.decode(file);
                return htmlTemplate;
              default:
-               throw new Error("template must be string");
+               throw new TypeError("template must be string");
          }
      }
     await next();
